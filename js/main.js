@@ -562,6 +562,7 @@
     var bio = el("p", { class: "about__bio" }, words);
 
     // Email with a copy button.
+    var emailLink = link("mailto:" + site.email, site.email);
     var copy = null;
     if (navigator.clipboard) {
       copy = el("button", { type: "button", class: "mono copy", text: "Copy" });
@@ -575,7 +576,7 @@
 
     var rows = [
       row("Contact", [
-        el("p", { class: "email" }, [link("mailto:" + site.email, site.email), copy]),
+        el("p", { class: "email" }, [emailLink, copy]),
         site.phone ? el("p", {}, [link("tel:" + site.phone.replace(/[^+\d]/g, ""), site.phone)]) : null,
         el("p", {}, [link(site.instagram, "Instagram", true)]),
       ]),
@@ -622,6 +623,21 @@
 
     app.appendChild(about);
     if (marquee) app.appendChild(marquee);
+
+    // Sizes the email to fill its column on one line, whatever its length;
+    // only an address too long even at the smallest size wraps.
+    function fitEmail() {
+      var room = emailLink.parentNode.clientWidth;
+      if (!room) return;
+      emailLink.classList.remove("is-wrapping");
+      emailLink.style.fontSize = "36px";
+      var size = Math.min(36, Math.floor(36 * room / emailLink.getBoundingClientRect().width * 0.98));
+      emailLink.style.fontSize = Math.max(size, 16) + "px";
+      emailLink.classList.toggle("is-wrapping", size < 16);
+    }
+    fitEmail();
+    if (document.fonts) document.fonts.ready.then(fitEmail);
+    window.addEventListener("resize", fitEmail);
 
     // Opening reveal of the portrait and the name.
     requestAnimationFrame(function () {

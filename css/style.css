@@ -576,13 +576,15 @@ a:hover > .swap > span + span, .swap:hover > span + span { transform: none; }
   gap: 6px 16px;
   margin-bottom: 12px;
 }
+/* the font size is set in JS so the address fits its column on one line */
 .email .u {
   font-family: var(--font-display);
-  font-size: clamp(20px, 2.1vw, 36px);
+  font-size: 24px;
   line-height: 1.1;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
+.email .u.is-wrapping { white-space: normal; overflow-wrap: anywhere; }
 .copy { color: var(--muted); transition: color 0.2s ease; }
 .copy:hover { color: var(--fg); }
 
@@ -645,6 +647,11 @@ a:hover > .swap > span + span, .swap:hover > span + span { transform: none; }
   .row { grid-template-columns: 7em minmax(0, 1fr); }
 }
 
+/* tablets held upright: the text column is narrow, labels go above */
+@media (max-width: 900px) {
+  .row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+}
+
 @media (max-width: 700px), (max-height: 500px) and (orientation: landscape) {
   :root { --edge: 16px; --airy: 7vw; }
 
@@ -683,7 +690,6 @@ a:hover > .swap > span + span, .swap:hover > span + span { transform: none; }
   .about__content { padding: 0 var(--gutter) 100px; }
   .about__head { min-height: 0; padding: 40px 0 72px; gap: 20px; }
   .about__name { font-size: 19vw; }
-  .email .u { font-size: 6.4vw; }
   .about__bio { margin-bottom: 80px; }
   .row { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-bottom: 44px; }
   .marquee { padding-bottom: 64px; }
@@ -700,7 +706,6 @@ a:hover > .swap > span + span, .swap:hover > span + span { transform: none; }
   .about { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .about__media { position: sticky; height: 100vh; height: 100svh; }
   .about__name { font-size: 9vw; }
-  .email .u { font-size: 3vw; }
   .lightbox img { max-height: calc(100vh - 110px); }
 }
 
