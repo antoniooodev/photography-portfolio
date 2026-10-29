@@ -90,6 +90,22 @@
     window.addEventListener("resize", fit);
   }
 
+  // Freezes the page behind overlays. iOS ignores overflow: hidden on the
+  // root, so the body is pinned in place and the scroll position restored.
+  var lockedY = 0;
+  function lockScroll(on) {
+    if (on === document.documentElement.classList.contains("is-locked")) return;
+    if (on) {
+      lockedY = window.scrollY;
+      document.body.style.top = -lockedY + "px";
+      document.documentElement.classList.add("is-locked");
+    } else {
+      document.documentElement.classList.remove("is-locked");
+      document.body.style.top = "";
+      window.scrollTo(0, lockedY);
+    }
+  }
+
   function setTitle(title) {
     document.title = title ? title + " — " + site.name : site.name + " — " + site.role;
   }
@@ -146,7 +162,7 @@
     function toggle(open) {
       menu.hidden = !open;
       menuButton.setAttribute("aria-expanded", String(open));
-      document.documentElement.classList.toggle("is-locked", open);
+      lockScroll(open);
       (open ? menu.querySelector("a") : menuButton).focus();
     }
     menuButton.addEventListener("click", function () { toggle(true); });
@@ -456,13 +472,13 @@
       opener = trigger;
       show(i);
       root.hidden = false;
-      document.documentElement.classList.add("is-locked");
+      lockScroll(true);
       closeBtn.focus();
     }
 
     function close() {
       root.hidden = true;
-      document.documentElement.classList.remove("is-locked");
+      lockScroll(false);
       if (opener) opener.focus();
     }
 
