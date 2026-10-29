@@ -19,6 +19,9 @@ window.SITE = {
   phone: "+39 000 000 0000",
   instagram: "https://www.instagram.com/",
 
+  // Small line at the bottom of every page.
+  credit: { label: "Powered by Antonio Tangaro", url: "https://www.antoniotangaro.dev/" },
+
   categories: [
     { slug: "people", title: "People" },
     { slug: "landscape", title: "Landscape" },

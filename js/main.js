@@ -77,19 +77,6 @@
     } catch (e) { return null; }
   }
 
-  // Shrinks or grows a single line of text until it is `ratio` of the viewport wide.
-  function fitWidth(node, ratio) {
-    function fit() {
-      node.style.fontSize = "100px";
-      var width = node.getBoundingClientRect().width || 1;
-      var target = window.innerWidth * (window.innerWidth < 700 ? Math.max(ratio, 0.72) : ratio);
-      node.style.fontSize = Math.min(100 * target / width, window.innerHeight * 0.3) + "px";
-    }
-    fit();
-    if (document.fonts) document.fonts.ready.then(fit);
-    window.addEventListener("resize", fit);
-  }
-
   // Freezes the page behind overlays. iOS ignores overflow: hidden on the
   // root, so the body is pinned in place and the scroll position restored.
   var lockedY = 0;
@@ -119,6 +106,30 @@
       el("div", { class: "topbar__right" }, [right]),
     ]);
     document.body.insertBefore(bar, app);
+
+    // Hidden while scrolling down so it never sits on top of text,
+    // back as soon as the visitor scrolls up.
+    var lastY = window.scrollY;
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var y = window.scrollY;
+        if (Math.abs(y - lastY) < 6) return;
+        bar.classList.toggle("is-hidden", y > 80 && y > lastY);
+        lastY = y;
+      });
+    }, { passive: true });
+  }
+
+  // Small "powered by" line at the bottom of every page.
+  function credit(cls) {
+    if (!site.credit) return null;
+    return el("p", { class: "credit mono" + (cls ? " " + cls : "") }, [
+      el("a", { class: "u", href: site.credit.url, target: "_blank", rel: "noopener", text: site.credit.label }),
+    ]);
   }
 
   function bottomnav(current) {
@@ -171,6 +182,8 @@
       if (e.key === "Escape" && !menu.hidden) toggle(false);
     });
 
+    var line = credit();
+    if (line) app.appendChild(line);
     document.body.appendChild(nav);
     document.body.appendChild(menu);
   }
@@ -231,6 +244,7 @@
         el("a", { href: "projects.html" }, [swap("Projects", "Stories")]),
         el("a", { href: "info.html" }, [swap("Info", "Contact")]),
       ]),
+      credit("credit--home"),
     ]);
     app.appendChild(home);
     topbar(null, null);
@@ -240,7 +254,6 @@
 
   function renderWork() {
     var current = category(params.get("c"));
-    var heading = current ? current.title : site.name;
     setTitle(current ? current.title : "Overview");
 
     var items = [];
@@ -254,7 +267,7 @@
       items.sort(function (a, b) { return a.index - b.index; });
     }
 
-    var title = el("h1", { text: heading });
+    var title = el("h1", { class: "visually-hidden", text: current ? current.title : site.name });
     var grid = el("div", { class: "work__grid", "data-size": "m" });
 
     items.forEach(function (item, n) {
@@ -325,11 +338,7 @@
     });
     setSize(["s", "m", "l"].indexOf(storage("portfolio-size")) > -1 ? storage("portfolio-size") : "m");
 
-    app.appendChild(el("section", { class: "work" }, [
-      el("div", { class: "work__title", "aria-hidden": "false" }, [title]),
-      grid,
-    ]));
-    fitWidth(title, 0.52);
+    app.appendChild(el("section", { class: "work" }, [title, grid]));
 
     topbar(el("span", { text: "Scroll to discover" }), sizes);
     bottomnav(current ? current.slug : "overview");

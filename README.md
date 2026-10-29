@@ -7,12 +7,12 @@ A static portfolio site for a photographer, built with plain HTML, CSS and JavaS
 | Page | File | Description |
 |---|---|---|
 | Home | `index.html` | The photographer's name set very large and split across lines, with two pill buttons on the sides. Hovering a button pulls the name apart and brings in three photos from that category, going from blurred to sharp. The links at the bottom swap their label on hover (INFO → CONTACT). |
-| Work | `work.html?c=people` (without `?c=` it shows every photo) | An airy four-column grid with the category title fixed behind the photos and the navigation fixed at the bottom. Clicking a photo enlarges it in place and shows a link to its project. The **S M L** switch in the top right changes the grid density. |
+| Work | `work.html?c=people` (without `?c=` it shows every photo) | An airy four-column grid with the navigation fixed at the bottom. Clicking a photo enlarges it in place and shows a link to its project. The **S M L** switch in the top right changes the grid density. |
 | Projects | `projects.html` | Four-column grid of project covers with title and "View project". Covers are black and white and turn to colour on hover. |
 | Project | `project.html?p=faces` | Full-screen opening photo with the title, description and credits, then the remaining photos (landscape images full width, portrait images in pairs), a lightbox with keyboard and swipe support, and a link to the next project. |
 | Info | `info.html` | Split layout: the portrait stays fixed on the left while the text column scrolls, slowly zooming out. The name is revealed line by line, with an availability status and the live local time. The bio lights up word by word as you scroll, section rules draw in when they enter the viewport, the email has a copy button, and clients scroll by in an endless strip that pauses on hover. Everything stacks into one column on phones and stays static when the visitor prefers reduced motion. |
 
-On small screens the bottom navigation collapses into a single MENU button.
+On small screens, and on phones held sideways, the bottom navigation collapses into a single MENU button. The top bar hides while scrolling down so it never sits on top of the content, and comes back when scrolling up. Every page ends with a small credit line, set in `js/data.js`.
 
 ## Editing the content
 
