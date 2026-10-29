@@ -10,13 +10,13 @@ A static portfolio site for a photographer, built with plain HTML, CSS and JavaS
 | Work | `work.html?c=people` (without `?c=` it shows every photo) | An airy four-column grid with the category title fixed behind the photos and the navigation fixed at the bottom. Clicking a photo enlarges it in place and shows a link to its project. The **S M L** switch in the top right changes the grid density. |
 | Projects | `projects.html` | Four-column grid of project covers with title and "View project". Covers are black and white and turn to colour on hover. |
 | Project | `project.html?p=faces` | Full-screen opening photo with the title, description and credits, then the remaining photos (landscape images full width, portrait images in pairs), a lightbox with keyboard and swipe support, and a link to the next project. |
-| Info | `info.html` | Dark page with a large statement, a portrait framed by viewfinder corners, selected clients, contacts and representation. |
+| Info | `info.html` | Split layout: the portrait stays fixed on the left while the text column scrolls, slowly zooming out. The name is revealed line by line, with an availability status and the live local time. The bio lights up word by word as you scroll, section rules draw in when they enter the viewport, the email has a copy button, and clients scroll by in an endless strip that pauses on hover. Everything stacks into one column on phones and stays static when the visitor prefers reduced motion. |
 
 On small screens the bottom navigation collapses into a single MENU button.
 
 ## Editing the content
 
-All texts, categories and projects live in **`js/data.js`**: name, email, phone, Instagram, the info statement, clients, agency and the list of projects.
+All texts, categories and projects live in **`js/data.js`**: name, email, phone, Instagram, the bio, availability and local time zone, clients, agency and the list of projects.
 
 To add a project:
 

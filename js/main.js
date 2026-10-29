@@ -501,46 +501,147 @@
   function renderInfo() {
     setTitle("Info");
     var info = site.info;
+    var motion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function list(items) {
-      return el("ul", {}, items.map(function (item) {
-        return item instanceof Node ? item : el("li", { text: item });
-      }));
+    function link(href, text, external) {
+      return el("a", { class: "u", href: href, target: external ? "_blank" : null, rel: external ? "noopener" : null, text: text });
     }
 
-    var contact = [
-      el("li", {}, [el("a", { href: "mailto:" + site.email, text: site.email })]),
-      site.phone ? el("li", {}, [el("a", { href: "tel:" + site.phone.replace(/[^+\d]/g, ""), text: site.phone })]) : null,
-      el("li", { class: "gap" }, [el("a", { href: site.instagram, target: "_blank", rel: "noopener", text: "Instagram" })]),
-      el("li", { class: "gap muted", text: site.location }),
-    ].filter(Boolean);
+    function row(title, children) {
+      return el("div", { class: "row" }, [
+        el("h2", { class: "mono", text: title }),
+        el("div", { class: "row__body" }, children),
+      ]);
+    }
 
-    var agencies = [];
-    (info.representation || []).forEach(function (r, i) {
-      agencies.push(el("li", { class: i ? "gap muted" : "muted", text: r.label }));
-      agencies.push(el("li", { text: r.name }));
-      agencies.push(el("li", {}, [el("a", { href: "mailto:" + r.email, text: r.email })]));
-      if (r.phone) agencies.push(el("li", { text: r.phone }));
+    // Name, revealed line by line.
+    var name = el("h1", { class: "about__name", "aria-label": site.name }, site.name.split(" ").map(function (part) {
+      return el("span", { class: "line", "aria-hidden": "true" }, [el("span", { text: part })]);
+    }));
+
+    // Local time, refreshed every 30 seconds.
+    var clock = null;
+    if (info.clock) {
+      var time = el("span");
+      var format = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: info.clock.timeZone });
+      var tick = function () { time.textContent = format.format(new Date()); };
+      tick();
+      setInterval(tick, 30000);
+      clock = el("span", {}, [info.clock.city + " ", time]);
+    }
+
+    // Bio split into words that light up while scrolling.
+    var words = (info.bio || "").split(/\s+/).filter(Boolean).map(function (word) {
+      return el("span", { class: "w", text: word + " " });
+    });
+    var bio = el("p", { class: "about__bio" }, words);
+
+    // Email with a copy button.
+    var copy = null;
+    if (navigator.clipboard) {
+      copy = el("button", { type: "button", class: "mono copy", text: "Copy" });
+      copy.addEventListener("click", function () {
+        navigator.clipboard.writeText(site.email).then(function () {
+          copy.textContent = "Copied";
+          setTimeout(function () { copy.textContent = "Copy"; }, 1600);
+        }, function () { window.location.href = "mailto:" + site.email; });
+      });
+    }
+
+    var rows = [
+      row("Contact", [
+        el("p", { class: "email" }, [link("mailto:" + site.email, site.email), copy]),
+        site.phone ? el("p", {}, [link("tel:" + site.phone.replace(/[^+\d]/g, ""), site.phone)]) : null,
+        el("p", {}, [link(site.instagram, "Instagram", true)]),
+      ]),
+    ];
+    (info.representation || []).forEach(function (r) {
+      rows.push(row("Representation", [
+        el("p", { class: "muted", text: r.label }),
+        el("p", { text: r.name }),
+        el("p", {}, [link("mailto:" + r.email, r.email)]),
+        r.phone ? el("p", { text: r.phone }) : null,
+      ]));
+    });
+    rows.push(row("Based in", [el("p", { text: site.location })]));
+
+    var portrait = info.portrait
+      ? picture(info.portrait.src, "Portrait of " + site.name, info.portrait, true)
+      : null;
+
+    var about = el("section", { class: "about" }, [
+      el("div", { class: "about__media" }, [portrait]),
+      el("div", { class: "about__content" }, [
+        el("header", { class: "about__head" }, [
+          name,
+          el("p", { class: "about__meta mono" }, [
+            info.availability ? el("span", { class: "status", text: info.availability }) : null,
+            clock,
+          ]),
+        ]),
+        bio,
+        el("div", { class: "about__rows" }, rows),
+      ]),
+    ]);
+
+    // Clients scroll by in an endless strip; the copy is hidden from screen readers.
+    var clients = info.clients || [];
+    function strip(hidden) {
+      return el("ul", { class: "marquee__list", "aria-hidden": hidden ? "true" : null },
+        clients.map(function (c) { return el("li", { text: c }); }));
+    }
+    var marquee = clients.length ? el("section", { class: "marquee", "aria-label": "Selected clients" }, [
+      el("h2", { class: "marquee__label mono", text: "Selected clients" }),
+      el("div", { class: "marquee__track" }, [strip(false), strip(true)]),
+    ]) : null;
+
+    app.appendChild(about);
+    if (marquee) app.appendChild(marquee);
+
+    // Opening reveal of the portrait and the name.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { about.classList.add("is-in"); });
     });
 
-    app.appendChild(el("section", { class: "info" }, [
-      el("h1", { class: "info__statement", text: info.statement }),
-      el("div", { class: "info__grid" }, [
-        info.portrait ? el("figure", { class: "info__portrait viewfinder" }, [
-          picture(info.portrait.src, "Portrait of " + site.name, info.portrait, true),
-        ]) : null,
-        el("section", { class: "info__block info__clients" }, [
-          el("h2", { class: "mono", text: "Selected clients" }),
-          list(info.clients || []),
-        ]),
-        el("section", { class: "info__block info__contact" }, [
-          el("h2", { class: "mono", text: "Get in touch" }),
-          list(contact),
-          agencies.length ? el("h2", { class: "mono", text: "Representation", style: { marginTop: "40px" } }) : null,
-          agencies.length ? list(agencies) : null,
-        ]),
-      ]),
-    ]));
+    // Rows draw their rule and fade in when they enter the viewport.
+    var rowNodes = about.querySelectorAll(".row");
+    if ("IntersectionObserver" in window && motion) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-in");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.25 });
+      rowNodes.forEach(function (n) { observer.observe(n); });
+    } else {
+      rowNodes.forEach(function (n) { n.classList.add("is-in"); });
+    }
+
+    // Scroll effects: bio words light up, the portrait slowly zooms out.
+    if (motion) {
+      var ticking = false;
+      var update = function () {
+        ticking = false;
+        var vh = window.innerHeight;
+        words.forEach(function (w) {
+          w.classList.toggle("is-lit", w.getBoundingClientRect().top < vh * 0.72);
+        });
+        if (portrait) {
+          var r = about.getBoundingClientRect();
+          var progress = Math.min(Math.max(-r.top / Math.max(r.height - vh, 1), 0), 1);
+          portrait.style.setProperty("--zoom", (1.12 - 0.12 * progress).toFixed(4));
+        }
+      };
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      window.addEventListener("resize", update);
+      update();
+    } else {
+      words.forEach(function (w) { w.classList.add("is-lit"); });
+    }
 
     topbar(el("span", { text: site.role + ", " + site.location }), null);
     bottomnav("info");

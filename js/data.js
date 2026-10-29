@@ -30,7 +30,10 @@ window.SITE = {
   home: { left: "people", right: "landscape" },
 
   info: {
-    statement: "Name Surname is a photographer based between Milan and London, working across portraiture, landscape and still life.",
+    bio: "Name Surname is a photographer based between Milan and London. Their work moves between portraiture, landscape and still life, always in natural light and with a slow, observational approach to people and places.",
+    availability: "Available for commissions",
+    // Local time shown on the info page.
+    clock: { city: "Milan", timeZone: "Europe/Rome" },
     portrait: { src: "images/info/portrait.jpg", w: 4, h: 5 },
     clients: [
       "Client One", "Client Two", "Client Three", "Client Four", "Client Five",
