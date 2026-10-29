@@ -4,22 +4,46 @@ A minimal, editorial portfolio for photographers. Plain HTML, CSS and JavaScript
 
 **[Live demo →](https://antoniooodev.github.io/photography-portfolio/)**
 
-![Home page with the name split apart and three photos fading in](docs/screenshots/desktop-home-hover.jpg)
+![The portfolio on desktop and phone](docs/screenshots/hero.jpg)
 
 ## Screenshots
 
-| | |
-|---|---|
-| ![Home](docs/screenshots/desktop-home.jpg) | ![Category grid](docs/screenshots/desktop-work.jpg) |
-| **Home** — the name set large, with category buttons on the sides | **Work** — airy grid of every photo in a category |
-| ![Enlarged photo in the grid](docs/screenshots/desktop-work-expanded.jpg) | ![Projects index](docs/screenshots/desktop-projects.jpg) |
-| **Work** — a click enlarges a photo in place and links to its project | **Projects** — covers turn from black and white to colour on hover |
-| ![Project opening](docs/screenshots/desktop-project.jpg) | ![Project gallery](docs/screenshots/desktop-project-gallery.jpg) |
-| **Project** — full-screen opening photo | **Project** — landscapes full width, portraits in pairs |
-| ![Info page](docs/screenshots/desktop-info.jpg) | ![Info page, contacts](docs/screenshots/desktop-info-scroll.jpg) |
-| **Info** — sticky portrait, name reveal, live local time | **Info** — contacts, representation and a scrolling client strip |
+### Home
 
-On phones every page collapses into a single column, with the navigation behind one MENU button:
+Hovering a category pulls the name apart and brings in three of its photos.
+
+![Home page](docs/screenshots/desktop-home.jpg)
+![Home page while hovering a category](docs/screenshots/desktop-home-hover.jpg)
+
+### Work
+
+Every photo in a category, in an airy grid. A click enlarges a photo in place; S / M / L changes the density.
+
+![Category grid](docs/screenshots/desktop-work.jpg)
+
+### Projects
+
+Covers turn from black and white to colour on hover.
+
+![Projects index](docs/screenshots/desktop-projects.jpg)
+
+### Project
+
+A full-screen opening photo, then landscapes full width and portraits in pairs, with a lightbox.
+
+![Project opening](docs/screenshots/desktop-project.jpg)
+![Project gallery](docs/screenshots/desktop-project-gallery.jpg)
+
+### Info
+
+A sticky portrait with the name revealed line by line, then contacts and a scrolling strip of clients.
+
+![Info page](docs/screenshots/desktop-info.jpg)
+![Info page, contacts and clients](docs/screenshots/desktop-info-contact.jpg)
+
+### Mobile
+
+Every page collapses into one column, with the navigation behind a single MENU button.
 
 ![The site on a phone: home, category grid, project, info and menu](docs/screenshots/mobile.jpg)
 
